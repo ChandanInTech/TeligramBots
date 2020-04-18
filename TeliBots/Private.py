@@ -1,0 +1,3 @@
+chat_id = 812867433
+chat_id_p = 1183235850
+token = "1240403795:AAHCKKtoNmrDWxOuxSxa4DgJD-S69PKhBLw"
