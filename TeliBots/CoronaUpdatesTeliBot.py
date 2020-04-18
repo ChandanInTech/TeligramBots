@@ -29,20 +29,25 @@ count = 0
 temp_cases = 0
 temp_deaths = 0
 temp_recovered = 0
+temp_sa_count = 0
 while True:
     update_time = corona_cases.get_corona_updates()[0]
     updated_cases = corona_cases.get_corona_updates()[1]
     updated_deaths = corona_cases.get_corona_updates()[2]
     updated_recovered = corona_cases.get_corona_updates()[3]
+    updated_sa_count = corona_cases.corona_sa_cases_update()
 
-    if temp_cases != updated_cases or temp_deaths != updated_deaths or temp_recovered != updated_recovered:
+    if temp_cases != updated_cases or temp_deaths != updated_deaths or temp_recovered != updated_recovered or temp_sa_count != updated_sa_count:
         print(count, update_time, updated_cases, updated_deaths, updated_recovered)
-        send_message(f"{update_time}\nCases: {updated_cases}\nDeaths: {updated_deaths}\nRecovered: {updated_recovered}",
-                     chat_id)
-        send_message(f"{update_time}\nCases: {updated_cases}\nDeaths: {updated_deaths}\nRecovered: {updated_recovered}",
-                     chat_id_p)
+        send_message(
+            f"Cases: {updated_cases}\nDeaths: {updated_deaths}\nRecovered: {updated_recovered}\nSan Antonio Cases: {updated_sa_count}",
+            chat_id)
+        send_message(
+            f"Cases: {updated_cases}\nDeaths: {updated_deaths}\nRecovered: {updated_recovered}\nSan Antonio Cases: {updated_sa_count}",
+            chat_id_p)
         temp_cases = updated_cases
         temp_recovered = updated_recovered
         temp_deaths = updated_deaths
+        temp_sa_count = updated_sa_count
     count += 1
     time.sleep(60 * 5)
