@@ -6,10 +6,9 @@ token = "1240403795:AAHCKKtoNmrDWxOuxSxa4DgJD-S69PKhBLw"
 corona_url = "https://www.worldometers.info/coronavirus/country/us/"
 sa_corona_url = "https://www.ksat.com/news/local/2020/03/17/heres-what-we-know-about-the-4-confirmed-covid-19-cases-in-san-antonio/"
 
-# , 1183235850
-chat_ids = [812867433, 1183235850]
+chat_ids = [812867433, 1183235850, 403661209]
 
-base = f"https://api.telegram.org/bot{token}/"
+base = "https://api.telegram.org/bot{}/".format(token)
 
 
 def get_corona_updates():
@@ -38,7 +37,7 @@ def corona_sa_cases_update():
 
 def send_message(message_text):
     for chat_id in chat_ids:
-        url = base + f"sendMessage?text={message_text}&chat_id={chat_id}"
+        url = base + "sendMessage?text={}&chat_id={}".format(message_text, chat_id)
         requests.get(url)
 
 
@@ -49,7 +48,6 @@ temp_recovered = 0
 temp_sa_count = 0
 
 while True:
-    # update_time = get_corona_updates()[0]
     updated_cases = get_corona_updates()[0]
     updated_deaths = get_corona_updates()[1]
     updated_recovered = get_corona_updates()[2]
@@ -58,7 +56,10 @@ while True:
     if temp_cases != updated_cases or temp_deaths != updated_deaths or temp_recovered != updated_recovered or temp_sa_count != updated_sa_count:
         print(count, updated_cases, updated_deaths, updated_recovered, updated_sa_count)
 
-        message_text = f"US Cases: {updated_cases}\nUS Deaths: {updated_deaths}\nUS Recovered: {updated_recovered}\nSan Antonio Cases: {updated_sa_count}"
+        message_text = "US Cases: {}\nUS Deaths: {}\nUS Recovered: {}\nSan Antonio Cases: {}".format(updated_cases,
+                                                                                                     updated_deaths,
+                                                                                                     updated_recovered,
+                                                                                                     updated_sa_count)
 
         send_message(message_text)
 
@@ -68,4 +69,4 @@ while True:
         temp_sa_count = updated_sa_count
 
     count += 1
-    time.sleep(60 * 15)
+    time.sleep(60 * 30)
