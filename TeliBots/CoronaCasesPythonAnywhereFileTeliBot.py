@@ -1,3 +1,5 @@
+import json
+
 import requests
 import time
 from bs4 import BeautifulSoup as bs
@@ -6,7 +8,7 @@ token = "1240403795:AAHCKKtoNmrDWxOuxSxa4DgJD-S69PKhBLw"
 corona_url = "https://www.worldometers.info/coronavirus/country/us/"
 sa_corona_url = "https://www.ksat.com/news/local/2020/03/17/heres-what-we-know-about-the-4-confirmed-covid-19-cases-in-san-antonio/"
 
-chat_ids = [812867433, 1183235850, 403661209]
+chat_ids = []
 
 base = "https://api.telegram.org/bot{}/".format(token)
 
@@ -36,9 +38,25 @@ def corona_sa_cases_update():
 
 
 def send_message(message_text):
+    get_chat_ids()
     for chat_id in chat_ids:
         url = base + "sendMessage?text={}&chat_id={}".format(message_text, chat_id)
         requests.get(url)
+
+
+def get_chat_ids():
+    url = base + "getUpdates"
+    r = requests.get(url)
+    resp = json.loads(r.content).get('result')
+
+    chat_ids.clear()
+
+    for x in resp:
+        chat_id = x.get('message').get('from').get('id')
+        if chat_id not in chat_ids:
+            chat_ids.append(chat_id)
+
+    return chat_ids
 
 
 count = 0
