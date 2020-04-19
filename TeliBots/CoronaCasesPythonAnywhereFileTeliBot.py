@@ -1,5 +1,4 @@
 import json
-
 import requests
 import time
 from bs4 import BeautifulSoup as bs
@@ -71,7 +70,10 @@ while True:
     updated_recovered = get_corona_updates()[2]
     updated_sa_count = corona_sa_cases_update()
 
-    if temp_cases != updated_cases or temp_deaths != updated_deaths or temp_recovered != updated_recovered or temp_sa_count != updated_sa_count:
+    if temp_cases != updated_cases \
+            or temp_deaths != updated_deaths \
+            or temp_recovered != updated_recovered \
+            or temp_sa_count != updated_sa_count:
         print(count, updated_cases, updated_deaths, updated_recovered, updated_sa_count)
 
         message_text = "US Cases: {}\nUS Deaths: {}\nUS Recovered: {}\nSan Antonio Cases: {}".format(updated_cases,
