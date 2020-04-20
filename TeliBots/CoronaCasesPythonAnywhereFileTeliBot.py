@@ -1,11 +1,13 @@
 import json
 import requests
 import time
+import csv
 from bs4 import BeautifulSoup as bs
 
 token = "1240403795:AAHCKKtoNmrDWxOuxSxa4DgJD-S69PKhBLw"
 corona_url = "https://www.worldometers.info/coronavirus/country/us/"
 sa_corona_url = "https://www.ksat.com/news/local/2020/03/17/heres-what-we-know-about-the-4-confirmed-covid-19-cases-in-san-antonio/"
+csv_file = "chat_ids.csv"
 
 chat_ids = []
 
@@ -37,25 +39,39 @@ def corona_sa_cases_update():
 
 
 def send_message(message_text):
-    get_chat_ids()
+    get_chat_ids_network()
     for chat_id in chat_ids:
         url = base + "sendMessage?text={}&chat_id={}".format(message_text, chat_id)
         requests.get(url)
 
 
-def get_chat_ids():
+def get_chat_ids_network():
     url = base + "getUpdates"
     r = requests.get(url)
     resp = json.loads(r.content).get('result')
 
-    chat_ids.clear()
-
     for x in resp:
         chat_id = x.get('message').get('from').get('id')
         if chat_id not in chat_ids:
-            chat_ids.append(chat_id)
+            if chat_id not in chat_ids:
+                chat_ids.append(chat_id)
 
-    return chat_ids
+    update_csv()
+
+
+def get_chat_ids_csv():
+    with open(csv_file, 'r') as f:
+        reader = csv.reader(f)
+        row = next(reader)
+        for x in row:
+            if int(x) not in chat_ids:
+                chat_ids.append(int(x))
+
+
+def update_csv():
+    with open(csv_file, 'w', newline='') as f:
+        csv_writer = csv.writer(f)
+        csv_writer.writerow(chat_ids)
 
 
 count = 0
@@ -63,6 +79,10 @@ temp_cases = 0
 temp_deaths = 0
 temp_recovered = 0
 temp_sa_count = 0
+
+# Runs from here
+
+get_chat_ids_csv()
 
 while True:
     updated_cases = get_corona_updates()[0]
