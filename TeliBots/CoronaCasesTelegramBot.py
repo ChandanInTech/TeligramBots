@@ -131,7 +131,7 @@ while True:
             updated_austin_recovered
         )
 
-        print(message_text)
+        print(str(count) + '\n' + message_text)
         send_message(message_text)
 
         temp_cases = updated_cases
