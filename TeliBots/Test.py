@@ -1,45 +1,28 @@
-import json
-import csv
 import requests
+from bs4 import BeautifulSoup as bs
 
-token = "1240403795:AAHCKKtoNmrDWxOuxSxa4DgJD-S69PKhBLw"
-base = "https://api.telegram.org/bot{}/".format(token)
-
-csv_file = "chat_ids.csv"
-
-chat_ids = []
+sa_corona_url = 'https://en.wikipedia.org/wiki/COVID-19_pandemic_in_Texas'
 
 
-# def get_chat_ids():
-#     url = base + "getUpdates"
-#     r = requests.get(url)
-#     resp = json.loads(r.content).get('result')
-#
-#     chat_ids = []
-#
-#     for x in resp:
-#         chat_id = x.get('message').get('from').get('id')
-#         if chat_id not in chat_ids:
-#             chat_ids.append(chat_id)
-#
-#     return chat_ids
+def corona_tx_cases_update():
+    page = requests.get(sa_corona_url)
+    soup = bs(page.content, 'html.parser')
+
+    table = soup.find('div', class_='tp-container')
+    table_rows = table.find('table').find_all('tr')
+
+    bexar_data = []
+    travis_data = []
+
+    for row in table_rows:
+        th = row.find('th')
+        if th and th.find('a') and th.find('a').get('title') and 'Bexar' in th.find('a').get('title'):
+            bexar_data = [i.text.strip() for i in row.find_all('td')]
+        elif th and th.find('a') and th.find('a').get('title') and 'Travis' in th.find('a').get('title'):
+            travis_data = [i.text.strip() for i in row.find_all('td')]
+            break
+
+    return bexar_data, travis_data
 
 
-def get_chat_ids_csv():
-    with open(csv_file, 'r') as f:
-        reader = csv.reader(f)
-        row = next(reader)
-        for x in row:
-            if int(x) not in chat_ids:
-                chat_ids.append(int(x))
-
-
-def update_csv():
-    with open(csv_file, 'w', newline='') as f:
-        csv_writer = csv.writer(f)
-        csv_writer.writerow(chat_ids)
-
-
-# update_csv()
-get_chat_ids_csv()
-print(chat_ids)
+print(corona_tx_cases_update())
